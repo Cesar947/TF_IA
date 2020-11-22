@@ -20,7 +20,7 @@ textFile = open('tweets_hashtag.txt', 'a', encoding='utf-8')
 #count: count
 #results = :
 
-for tweet in tweepy.Cursor(api.search, q='#ayudenme', lang='es', count=20, tweet_mode='extended').items():
+for tweet in tweepy.Cursor(api.search, q='#helpme', lang='en', count=20, tweet_mode='extended').items():
     if ('RT @' not in tweet.full_text):
         textFile.write(tweet.full_text + "|%&|\n")
 
