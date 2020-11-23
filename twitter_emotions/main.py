@@ -16,7 +16,6 @@ pygame.init()
 window = pygame.display.set_mode((700, 700))		#set width & height of display
 pygame.display.set_caption("Twitter Prediction")		#set window name
 background_color = (255, 255, 255)
-#bg = pygame.image.load('./twitter_emotions/assets/pokemon_pattern.png')
 
 app = App(window)
 
@@ -35,17 +34,15 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             app.search(pos)    
+            app.click_button(pos)
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 app.search_text_paste()
             if event.key == pygame.K_BACKSPACE:
-                app.search_text_space(event)
-            #else:
-            #    app.search_text_write(event)
-            #app.search(pos)    
+                app.search_text_space(event)    
             
         if event.type == pygame.MOUSEMOTION:
-            app.click_button(pos)
+            app.over_button(pos)
 
 
