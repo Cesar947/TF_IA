@@ -5,15 +5,17 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import CountVectorizer
+import heapq
 
 class NlpPipeline:
     def __init__(self):
-        self.train_file = open("tweets_hashtag.txt", "r", encoding="utf8")
+        self.train_file = open("tweets_sad.txt", "r", encoding="utf8")
         self.tweet_list = []
         self.tokenized_list = []
         self.tweet_valid_words = None
         self.tagged_words = None
         self.lemmatized_words = None
+        self.bag_of_words = None
 
     def remove_url_mentions(self, tweet):
         # Expresión regular para eliminar los urls
@@ -105,11 +107,28 @@ class NlpPipeline:
         for list_strings in self.lemmatized_words:
             tweets.append(' '.join(list_strings))
         count_vec.fit(tweets)
-        bag_of_words = count_vec.transform(tweets).toarray()
-        print("Contenido: {}".format(count_vec.vocabulary_))
-        print("Primer intento Bag of Words")
-        for words in bag_of_words:
-            print(words)
+        aux_bag = count_vec.transform(tweets).toarray()
+        #lista = [0 for _ in range(len(bag_of_words[0]))]
+        dict_aux = {}
+        
+        for i, words in enumerate(aux_bag):
+            for word_number, frecuency in enumerate(words):
+                if i == 0:
+                    dict_aux[word_number] = frecuency
+                elif frecuency != 0:
+                    dict_aux[word_number] += frecuency
+
+        ordered_dict = sorted(dict_aux, key=dict_aux.get, reverse=True)[:1000]
+
+        bag_of_words_filtered = [[] for _ in range(len(aux_bag))]
+        i = 0
+        for words in aux_bag:
+            for key in ordered_dict:
+                bag_of_words_filtered[i].append(words[key])
+            i += 1
+        print(f"La longitud debe ser 100: {len(bag_of_words_filtered[0])}")
+        self.bag_of_words = bag_of_words_filtered
+       
 
     def run_pipeline(self):
         self.pre_process()
@@ -140,6 +159,9 @@ pipeline.run_pipeline()
 # print("\n")
 # for line in pipeline.lemmatized_words:
 #     print(line)
- 
+print("################### BAG OF WORDS ######################")
+print("\n")
+for line in pipeline.bag_of_words:
+    print(line)
 
     

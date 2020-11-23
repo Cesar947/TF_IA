@@ -17,7 +17,6 @@ vect.fit(phrases)
 print("Tamaño del vocabulario: {}".format(len(vect.vocabulary_)))
 print("Contenido: {}".format(vect.vocabulary_))
 
-bag_of_words = vect.transform(phrases).toarray()
+bag_of_words = vect.transform(phrases)
 print("Bag of words: {}".format(bag_of_words))
-
-print(np.array(bag_of_words))
+print("Bag of words: {}".format(bag_of_words.toarray()))
