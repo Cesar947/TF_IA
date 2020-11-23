@@ -14,18 +14,21 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
 #results = api.search('I want to be alone', lang='en', count=10)
-textFile = open('tweets_hashtag.txt', 'a', encoding='utf-8')
+textFile = open('tweets_sad.txt', 'a', encoding='utf-8')
 #q: query
 #lang: language
 #count: count
 #results = :
 
-for tweet in tweepy.Cursor(api.search, q='#ayudenme', lang='es', count=20, tweet_mode='extended').items():
+for tweet in tweepy.Cursor(api.search, q='depressed OR sad OR sadness', lang='en', tweet_mode='extended').items(2000):
     if ('RT @' not in tweet.full_text):
         textFile.write(tweet.full_text + "|%&|\n")
 
 
-
+#depressed
+#sadness
+#sad
+#alone
 
 
 
