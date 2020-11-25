@@ -6,6 +6,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import CountVectorizer
 import heapq
+import numpy as np
 
 class NlpPipeline:
     def __init__(self, file, test_data_file=None):
@@ -30,7 +31,10 @@ class NlpPipeline:
         # Eliminar los url's
         text = re.sub(url_pattern, "", tweet)
         # Eliminar los hashtags, menciones o palabras con ampersam
-        text = re.sub(r"[@#&:]+(\w+\s?)[@#&:]?\s?","", text)
+        text = re.sub(r"[@#&]+(\w+\s?)\s?","", text)
+        
+        # Eliminar emojis de tipo :palabra:
+        text = re.sub(r"[:]+(\w+\s?)[:]?\s?","", text)
 
         # Eliminar caracteres que no sean palabras
         text = re.sub(r'\W+', " ", text)
@@ -150,8 +154,11 @@ class NlpPipeline:
             for key in self.words_keys_in_bag:
                 bag_of_words_filtered[i].append(words[key])
             i += 1
-        print(f"La longitud debe ser 1000: {len(bag_of_words_filtered[0])}")
-        self.bag_of_words = bag_of_words_filtered
+        self.bag_of_words = np.array(bag_of_words_filtered)
+        print("### BAG OF WORDS ###")
+        print(self.bag_of_words)
+        print(f"Rows: {len(self.bag_of_words)}, Columns: {len(self.bag_of_words[0])}")
+
        
 
     def run_pipeline(self):
@@ -201,16 +208,14 @@ class NlpPipeline:
 
         return vector
 
-pipeline = NlpPipeline(open("tweets_dataset.txt", "r", encoding="utf8"))
-pipeline.run_pipeline()
 
-test = "I wanna say thanks to all the supporter this Season! :heart:\n"+\
-"You guys motivated me a lot to improve everyday and you guys know how ambitious"+\
-" I am so it’s always tough for me to lose this important games...\nThere is still"+\
-" worlds left and I will be ready for that!\nDon’t count us out:wink:"
-vector = pipeline.test_tweet_vectorization(test)
-c = 0
-for v in vector:
-    if v == 1:
-        c += 1
-print(f"Tiene {c} coincidencias con el vocabulario")
+# test = "I wanna say thanks to all the supporter this Season! :heart:\n"+\
+# "You guys motivated me a lot to improve everyday and you guys know how ambitious"+\
+# " I am so it’s always tough for me to lose this important games...\nThere is still"+\
+# " worlds left and I will be ready for that!\nDon’t count us out:wink:"
+# vector = pipeline.test_tweet_vectorization(test)
+# c = 0
+# for v in vector:
+#     if v == 1:
+#         c += 1
+# print(f"Tiene {c} coincidencias con el vocabulario")

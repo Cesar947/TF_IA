@@ -1,11 +1,11 @@
 import pygame
-
+import os
 from models.option import Option
 from models.search_bar import SearchBar
 from models.toolbar import ToolBar
 from models.button import Button
 from models.tweet_detail import TweetDetail
-
+from nlp.NLP_Pipeline import NlpPipeline
 class App():
     def __init__(self, window):
         self.window = window
@@ -15,7 +15,16 @@ class App():
         self.good_option = Option(1,200,550)
         self.bad_option = Option(2,400,550)
         self.searched = False
-        self.tweet_detail = TweetDetail(120,260)
+        cwd = os.getcwd()  # Get the current working directory (cwd)
+        files = os.listdir(cwd)  # Get all the files in that directory
+        print("Files in %r: %s" % (cwd, files))
+        # Pipeline integrado - Primera versión
+        self.pipeline = NlpPipeline(open("twitter_emotions/nlp/tweets_dataset.txt", "r", encoding="utf8"))
+        self.pipeline.run_pipeline()
+        
+        # Pasando el pipeline como parámetro al TweetDetail
+        # TweetDetail: Clase en donde se realiza la extracción y muestra del tweet
+        self.tweet_detail = TweetDetail(120,260, self.pipeline)
         self.tweet_id = ''
 
     def draw_app(self):

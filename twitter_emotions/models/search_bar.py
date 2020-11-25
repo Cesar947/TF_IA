@@ -55,5 +55,5 @@ class SearchBar(Component):
         self.search_text = self.search_text[:-1]
 
     def get_tweet_id(self):
-        url = self.search_text.strip('?s=20')
+        url = self.search_text.replace('?s=20','')
         return url.split('/')[-1]

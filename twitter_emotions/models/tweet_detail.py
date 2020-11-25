@@ -9,6 +9,8 @@ import os
 from models.component import Component
 from models.util import crop_image
 
+
+
 consumer_key = config('TWITTER_API_KEY')
 consumer_secret = config('TWITTER_API_SECRET_KEY')
 access_token = config('TWITTER_ACCESS_TOKEN')
@@ -35,8 +37,9 @@ font_name = pygame.freetype.Font(os.path.join (fontdir, "font_family", "seguiemj
 font_text = pygame.freetype.Font(os.path.join (fontdir, "font_family", "seguiemj.ttf"), 18, font_index=0, resolution=0, ucs4=False)
 
 class TweetDetail(Component):
-    def __init__(self, x, y, width = pos.get_rect().width, height = pos.get_rect().height):
+    def __init__(self, x, y, pipeline=None, width = pos.get_rect().width, height = pos.get_rect().height):
         Component.__init__(self, x, y, width, height)
+        self.pipeline = pipeline
         self.tweet_text = ''
         self.tweet_user_name = ''
         self.tweet_user = ''
@@ -62,9 +65,12 @@ class TweetDetail(Component):
         self.tweet_user_image = tweet.user.profile_image_url
         self.tweet_user = tweet.user.screen_name
         self.tweet_text = tweet.full_text
+        print(self.tweet_text)
+        print(self.pipeline.test_tweet_vectorization(self.tweet_text))
         self.file_image = io.BytesIO(urllib.request.urlopen(self.tweet_user_image).read())
         mode, size, data = crop_image(self.tweet_user_image)
         self.photo_profile = pygame.image.fromstring(data, size, mode)
+
 
     def blit_text(self, surface, text, pos):
         words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
