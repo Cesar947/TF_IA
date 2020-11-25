@@ -5,6 +5,7 @@ pygame.init()
 
 btn = pygame.image.load('./twitter_emotions/assets/clasificar_icon.png')
 btn_sel = pygame.image.load('./twitter_emotions/assets/clasificar_icon_selected.png')
+close_btn = pygame.image.load('./twitter_emotions/assets/close_btn.png')
 
 class Button(Component):
     def __init__(self, x, y, width = btn.get_rect().width, height = btn.get_rect().height):
@@ -23,3 +24,16 @@ class Button(Component):
         self.asset = btn
         return False
         
+class CloseButton(Component):
+    def __init__(self, x, y, width = close_btn.get_rect().width, height = close_btn.get_rect().height):
+        Component.__init__(self, x, y, width, height)
+        self.asset = close_btn
+        
+    def draw_button(self, window):           
+        window.blit(self.asset, (self.x, self.y))
+    
+    def is_click(self, pos):
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] <self.y + self.height:
+                return True
+        return False

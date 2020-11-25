@@ -17,6 +17,7 @@ class App():
         self.searched = False
         self.tweet_detail = TweetDetail(120,260)
         self.tweet_id = ''
+        self.clicked_bar = False
 
     def draw_app(self):
         self.sbar.draw_search_bar(self.window)
@@ -32,9 +33,18 @@ class App():
 
     def search(self, pos):
         self.sbar.is_clicked(pos)
+        if self.clicked_bar == False:
+            self.clicked_bar = True
+        elif self.clicked_bar == True:
+            self.clicked_bar = False
+
+    def erase_text(self, pos):
+        if self.clicked_bar == True:
+            self.sbar.erase_text(pos)
 
     def search_text_write(self, event):
-        self.sbar.write_search_text(event)
+        if self.clicked_bar == True:
+            self.sbar.write_search_text(event)
 
     def search_text_space(self, event):
         self.sbar.space_search_text(event)

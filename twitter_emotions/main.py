@@ -39,7 +39,8 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             app.search(pos)     
             app.click_button(pos)
-        
+            app.erase_text(pos)
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 app.search_text_paste() 

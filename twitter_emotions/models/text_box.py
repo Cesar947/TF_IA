@@ -115,9 +115,6 @@ class TextBox(object):
         #    curse.topleft = self.render_rect.topleft
         #    surface.fill(self.font_color,(curse.right+1,curse.y,2,curse.h))
         
-#pg.init()
-#screen = pg.display.set_mode((600,400))
-#done = False
  
 def name_on_enter(id, final):
     print('enter pressed, username is "{}"'.format(final))
@@ -130,12 +127,3 @@ username_settings = {
  
 name_entry = TextBox(rect=(70,100,150,30), **username_settings)
 
- 
-#while not done:
-#    for event in pg.event.get():
-#        if event.type == pg.QUIT:
-#            done = True
-#        name_entry.get_event(event)
-#    name_entry.update()
-#    name_entry.draw(screen)
-#    pg.display.update()
