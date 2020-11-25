@@ -1,6 +1,7 @@
 
 import pygame
 import clipboard
+from models.text_box import TextBox, username_settings
 from models.component import Component
 
 
@@ -19,14 +20,16 @@ class SearchBar(Component):
         Component.__init__(self, x, y, width, height)
         self.asset = s_back
         self.button = s_btn
+        self.text_box = TextBox(rect=(self.x + 40,self.y + 3,510,33), **username_settings)
         self.search_text = ''
         self.clicked = False
+        self.image = pygame.Surface((510 ,39))
         
-    def draw_search_bar(self, window):           
+    def draw_search_bar(self, window):        
         window.blit(self.asset, (self.x, self.y))
         window.blit(self.button, (self.x + 10, self.y + 8))
-        s_text = font.render(self.search_text, 1, (0,0,0))
-        window.blit(s_text, (self.x + 50, self.y + 10))
+        self.text_box.update()
+        self.text_box.draw(window)
 
     def is_clicked(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
@@ -42,10 +45,11 @@ class SearchBar(Component):
 
         
     def write_search_text(self, event):
-        self.search_text += event.unicode
+        self.text_box.get_event(event)
 
     def paste_search_text(self):
         self.search_text = clipboard.paste()
+        self.text_box.set_buffer(self.search_text)
 
     def space_search_text(self):
         self.search_text = self.search_text[:-1]
