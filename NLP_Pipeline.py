@@ -8,70 +8,80 @@ from sklearn.feature_extraction.text import CountVectorizer
 import heapq
 
 class NlpPipeline:
-    def __init__(self):
-        self.train_file = open("tweets_sad.txt", "r", encoding="utf8")
+    def __init__(self, file, test_data_file=None):
+        self.file = file
         self.tweet_list = []
         self.tokenized_list = []
         self.tweet_valid_words = None
         self.tagged_words = None
         self.lemmatized_words = None
+        self.vocabulary = {}
+        self.words_keys_in_bag = None
+        self.available_words = []
         self.bag_of_words = None
 
-    def remove_url_mentions(self, tweet):
+    def remove_url_mentions(self, tweet, train_bool):
         # Expresión regular para eliminar los urls
         url_pattern = r"(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?"
         # Reemplazar el string utilizado para separar los tweets
-        text = tweet.replace("|%&|\n", "")
+        text = ""
+        if(train_bool):
+            tweet = tweet.replace("|%&|\n", "")
         # Eliminar los url's
-        text = re.sub(url_pattern, "", text)
+        text = re.sub(url_pattern, "", tweet)
         # Eliminar los hashtags, menciones o palabras con ampersam
-        text = re.sub(r"[@#&](\w+\s?)","", text)
+        text = re.sub(r"[@#&:]+(\w+\s?)[@#&:]?\s?","", text)
+
         # Eliminar caracteres que no sean palabras
         text = re.sub(r'\W+', " ", text)
         return text
-
+    
     def pre_process(self):
         cont = False
         text = ""
        
-        for line in self.train_file.readlines():
+        for line in self.file.readlines():
             if line.split() == []:
                 continue
             if cont:
                 if("|%&|" in line[-6:]):
-                    text = self.remove_url_mentions(line)
+                    text = self.remove_url_mentions(line, True)
                     cont = False
                 self.tweet_list[-1] = self.tweet_list[-1] + " " + text
             else:
-                text = self.remove_url_mentions(line)
+                text = self.remove_url_mentions(line, True)
                 self.tweet_list.append(text)
                 if("|%&|" in line[-6:]):
                     continue
                 else:
                     cont = True
-        self.train_file.close()
+        self.file.close()
+
+    def tokenize_single_tweet(self, tweet, tokenizer):
+        return tokenizer.tokenize(tweet)
 
     def tokenize(self):
         tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
         for tweet in self.tweet_list:
-            self.tokenized_list.append(tokenizer.tokenize(tweet))
+            self.tokenized_list.append(self.tokenize_single_tweet(tweet,tokenizer))
 
+    def remove_stop_words_single_tweet(self, tokens, stop_words):
+        list_valid = []
+        for token in tokens:
+            if token not in stop_words:
+                list_valid.append(token)
+        return list_valid
 
     def remove_stop_words(self):
         self.tweet_valid_words = [[] for _ in range(len(self.tokenized_list))]
         stop_words = set(stopwords.words("english"))
         i = 0
         for tweet_tokens in self.tokenized_list:
-            for token in tweet_tokens:
-                if token not in stop_words:
-                    self.tweet_valid_words[i].append(token) 
+            self.tweet_valid_words[i] = self.remove_stop_words_single_tweet(tweet_tokens, stop_words)
             i += 1
-
-    
 
     def pos_tag(self):
         self.tagged_words = []
-
         for tweet in self.tweet_valid_words:
             self.tagged_words.append(nltk.pos_tag(tweet))
 
@@ -87,17 +97,23 @@ class NlpPipeline:
         else:
             return None
     
+    def lemmatize_single_tweet(self, tweet, lemmatizer):
+        
+        lema_list = []
+        for word, pos_tag in tweet:
+                pos = self.get_wordnet_pos(pos_tag)
+                if pos is None:
+                    lema_list.append(lemmatizer.lemmatize(word))
+                else:
+                    lema_list.append(lemmatizer.lemmatize(word, pos))
+        return lema_list
+        
     def lemmatize(self):
         lemmatizer = WordNetLemmatizer()
         self.lemmatized_words = [[] for _ in range(len(self.tagged_words))]
         i = 0
         for tweet in self.tagged_words:
-            for word, pos_tag in tweet:
-                pos = self.get_wordnet_pos(pos_tag)
-                if pos is None:
-                    self.lemmatized_words[i].append(lemmatizer.lemmatize(word))
-                else:
-                    self.lemmatized_words[i].append(lemmatizer.lemmatize(word, pos))
+            self.lemmatized_words[i] = self.lemmatize_single_tweet(tweet, lemmatizer)
             i += 1
 
     #Convertir a Bag of Words
@@ -107,8 +123,11 @@ class NlpPipeline:
         for list_strings in self.lemmatized_words:
             tweets.append(' '.join(list_strings))
         count_vec.fit(tweets)
+
+        self.vocabulary = {value: key for key, value in count_vec.vocabulary_.items()}
+
+
         aux_bag = count_vec.transform(tweets).toarray()
-        #lista = [0 for _ in range(len(bag_of_words[0]))]
         dict_aux = {}
         
         for i, words in enumerate(aux_bag):
@@ -117,16 +136,21 @@ class NlpPipeline:
                     dict_aux[word_number] = frecuency
                 elif frecuency != 0:
                     dict_aux[word_number] += frecuency
+        
+        self.words_keys_in_bag = sorted(dict_aux, key=dict_aux.get, reverse=True)[:1000]
 
-        ordered_dict = sorted(dict_aux, key=dict_aux.get, reverse=True)[:1000]
+        aux_vocabulary = {} 
+        for key in self.words_keys_in_bag:
+            aux_vocabulary[key] = self.vocabulary[key]
+        self.vocabulary = aux_vocabulary
 
         bag_of_words_filtered = [[] for _ in range(len(aux_bag))]
         i = 0
         for words in aux_bag:
-            for key in ordered_dict:
+            for key in self.words_keys_in_bag:
                 bag_of_words_filtered[i].append(words[key])
             i += 1
-        print(f"La longitud debe ser 100: {len(bag_of_words_filtered[0])}")
+        print(f"La longitud debe ser 1000: {len(bag_of_words_filtered[0])}")
         self.bag_of_words = bag_of_words_filtered
        
 
@@ -138,30 +162,55 @@ class NlpPipeline:
         self.lemmatize()
         self.vectorize()
 
-pipeline = NlpPipeline()
-pipeline.run_pipeline()
-# print("################### MATRIZ TOKENIZADA INICIAL ######################")
-# print("\n")
-# for line in pipeline.tokenized_list:
-#     print(line)
-# print("\n")
-# print("################### MATRIZ SIN STOP WORDS ######################")
-# print("\n")
-# for line in pipeline.tweet_valid_words:
-#     print(line)
-# print("\n")
-# print("################### MATRIZ TAGGEADA ######################")
-# print("\n")
-# for line in pipeline.tagged_words:
-#     print(line)
-# print("\n")
-# print("################### MATRIZ LEMATIZADA ######################")
-# print("\n")
-# for line in pipeline.lemmatized_words:
-#     print(line)
-print("################### BAG OF WORDS ######################")
-print("\n")
-for line in pipeline.bag_of_words:
-    print(line)
+    def test_tweet_vectorization(self, tweet):
 
-    
+        # Pipeline para un solo tweet (El que será procesado en la app ya entrenada)
+
+        clean_tweet = self.remove_url_mentions(tweet, False)
+
+        tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
+        tokenized = self.tokenize_single_tweet(clean_tweet, tokenizer)
+
+        stop_words = set(stopwords.words("english"))
+        without_stop_words = self.remove_stop_words_single_tweet(tokenized, stop_words)
+
+        pos_tagged = nltk.pos_tag(without_stop_words)
+
+        lemmatizer = WordNetLemmatizer()
+        lema_list = self.lemmatize_single_tweet(pos_tagged, lemmatizer)
+
+        # Cuando el tweet esté tokenizado
+        # Se procederá a construir su matriz de frecuencia
+        # de acuerdo al vocabulario de entrenamiento
+        # Obtenemos el tamaño de la cantidad de keys de palabras disponibles
+        ## En este caso son 1000
+        # E inicializamos el vector con 0's
+        n = len(self.words_keys_in_bag)
+        vector = [0 for _ in range(n)]
+
+        # Por cada palabra en la lista
+        for word in lema_list:
+            i = 0
+            # Iterando en la lista de keys (Debe iterar ordenadamente)
+            for key in self.words_keys_in_bag:
+                # Si la palabra es igual a la palabra del vocabulario
+                if word == self.vocabulary[key]:
+                    # Aumenta en 1 al vector en la posición i que llega hasta 1000 (Porque son 1000 palabras en el vocabulario)
+                    vector[i] += 1
+                i += 1
+
+        return vector
+
+pipeline = NlpPipeline(open("tweets_dataset.txt", "r", encoding="utf8"))
+pipeline.run_pipeline()
+
+test = "I wanna say thanks to all the supporter this Season! :heart:\n"+\
+"You guys motivated me a lot to improve everyday and you guys know how ambitious"+\
+" I am so it’s always tough for me to lose this important games...\nThere is still"+\
+" worlds left and I will be ready for that!\nDon’t count us out:wink:"
+vector = pipeline.test_tweet_vectorization(test)
+c = 0
+for v in vector:
+    if v == 1:
+        c += 1
+print(f"Tiene {c} coincidencias con el vocabulario")

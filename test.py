@@ -20,7 +20,7 @@ textFile = open('tweets_sad.txt', 'a', encoding='utf-8')
 #count: count
 #results = :
 
-for tweet in tweepy.Cursor(api.search, q='depressed OR sad OR sadness', lang='en', tweet_mode='extended').items(2000):
+for tweet in tweepy.Cursor(api.search, q="need help OR I'm depressed", lang='en', tweet_mode='extended').items(600):
     if ('RT @' not in tweet.full_text):
         textFile.write(tweet.full_text + "|%&|\n")
 
