@@ -11,7 +11,7 @@ s_back_sel = pygame.image.load('./twitter_emotions/assets/search_back_selected.p
 s_btn = pygame.image.load('./twitter_emotions/assets/search_button.png')
 s_btn_sel = pygame.image.load('./twitter_emotions/assets/search_button_selected.png')
 
-font = pygame.font.Font(None, 25)
+font = pygame.font.Font('./twitter_emotions/models/font_family/GothamNarrow-Light.otf', 18)
 
 
 class SearchBar(Component):
@@ -49,3 +49,7 @@ class SearchBar(Component):
 
     def space_search_text(self):
         self.search_text = self.search_text[:-1]
+
+    def get_tweet_id(self):
+        url = self.search_text.strip('?s=20')
+        return url.split('/')[-1]
