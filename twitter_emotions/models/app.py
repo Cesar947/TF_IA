@@ -26,21 +26,34 @@ class App():
         # TweetDetail: Clase en donde se realiza la extracción y muestra del tweet
         self.tweet_detail = TweetDetail(120,260, self.pipeline)
         self.tweet_id = ''
+        self.clicked_bar = False
 
     def draw_app(self):
         self.sbar.draw_search_bar(self.window)
         self.tbar.draw_tool_bar(self.window)
         self.btn.draw_button(self.window)
-        self.good_option.draw_option(self.window)
-        self.bad_option.draw_option(self.window)
+        if self.searched == False:
+            self.good_option.draw_option(self.window)
+            self.bad_option.draw_option(self.window)
         if self.searched == True:
             self.tweet_detail.draw_tweet(self.window)
+            self.good_option.change_opacity(self.window)
+            self.bad_option.increment(self.window)
 
     def search(self, pos):
         self.sbar.is_clicked(pos)
+        if self.clicked_bar == False:
+            self.clicked_bar = True
+        elif self.clicked_bar == True:
+            self.clicked_bar = False
+
+    def erase_text(self, pos):
+        if self.clicked_bar == True:
+            self.sbar.erase_text(pos)
 
     def search_text_write(self, event):
-        self.sbar.write_search_text(event)
+        if self.clicked_bar == True:
+            self.sbar.write_search_text(event)
 
     def search_text_space(self, event):
         self.sbar.space_search_text(event)
@@ -52,7 +65,8 @@ class App():
         self.btn.is_over(pos)
 
     def click_button(self, pos):
-        self.btn.is_over(pos)
-        self.tweet_id = self.sbar.get_tweet_id()
-        self.tweet_detail.get_tweet(self.tweet_id)
-        self.searched = True
+        if self.sbar.get_text() != '':
+            self.btn.is_over(pos)
+            self.tweet_id = self.sbar.get_tweet_id()
+            self.tweet_detail.get_tweet(self.tweet_id)
+            self.searched = True

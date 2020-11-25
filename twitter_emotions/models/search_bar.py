@@ -2,6 +2,7 @@
 import pygame
 import clipboard
 from models.text_box import TextBox, username_settings
+from models.button import CloseButton
 from models.component import Component
 
 
@@ -20,6 +21,7 @@ class SearchBar(Component):
         Component.__init__(self, x, y, width, height)
         self.asset = s_back
         self.button = s_btn
+        self.c_btn = CloseButton(self.x + 535, self.y + 7)
         self.text_box = TextBox(rect=(self.x + 40,self.y + 3,510,33), **username_settings)
         self.search_text = ''
         self.clicked = False
@@ -30,20 +32,27 @@ class SearchBar(Component):
         window.blit(self.button, (self.x + 10, self.y + 8))
         self.text_box.update()
         self.text_box.draw(window)
+        if self.clicked == True:
+            self.c_btn.draw_button(window)
 
     def is_clicked(self, pos):
-        if pos[0] > self.x and pos[0] < self.x + self.width:
+        if pos[0] > self.x and pos[0] < self.x + self.width - 80:
             if pos[1] > self.y and pos[1] <self.y + self.height:
                 if self.clicked == False:
                     self.asset = s_back_sel
                     self.button = s_btn_sel
+                    self.text_box.set_color((255,255,255))
                     self.clicked = True
                 else:
                     self.asset = s_back
                     self.button = s_btn
+                    self.text_box.set_color((235, 238, 240))
                     self.clicked = False
-
         
+    def erase_text(self, pos):
+        if self.c_btn.is_click(pos):
+            self.text_box.set_buffer([])
+
     def write_search_text(self, event):
         self.text_box.get_event(event)
 
@@ -51,9 +60,12 @@ class SearchBar(Component):
         self.search_text = clipboard.paste()
         self.text_box.set_buffer(self.search_text)
 
+    def get_text(self):
+        return self.search_text
+
     def space_search_text(self):
         self.search_text = self.search_text[:-1]
 
     def get_tweet_id(self):
-        url = self.search_text.replace('?s=20','')
+        url = self.search_text.replace('?s=20', '')
         return url.split('/')[-1]
