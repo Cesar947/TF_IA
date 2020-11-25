@@ -22,10 +22,13 @@ class App():
         self.sbar.draw_search_bar(self.window)
         self.tbar.draw_tool_bar(self.window)
         self.btn.draw_button(self.window)
-        self.good_option.draw_option(self.window)
-        self.bad_option.draw_option(self.window)
+        if self.searched == False:
+            self.good_option.draw_option(self.window)
+            self.bad_option.draw_option(self.window)
         if self.searched == True:
             self.tweet_detail.draw_tweet(self.window)
+            self.good_option.change_opacity(self.window)
+            self.bad_option.increment(self.window)
 
     def search(self, pos):
         self.sbar.is_clicked(pos)

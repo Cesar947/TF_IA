@@ -14,8 +14,12 @@ pygame.init()
 
 #display pygame
 window = pygame.display.set_mode((700, 750))		#set width & height of display
-pygame.display.set_caption("Twitter Prediction")		#set window name
+pygame.display.set_caption("Twitter Sentpy")		#set window name
 background_color = (255, 255, 255)
+
+programIcon = pygame.image.load('./twitter_emotions/assets/bot_icon.png')
+
+pygame.display.set_icon(programIcon)
 
 app = App(window)
 
