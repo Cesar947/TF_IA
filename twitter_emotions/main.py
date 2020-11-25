@@ -31,6 +31,7 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         app.search_text_write(event)
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             app.search(pos)     
             app.click_button(pos)
@@ -38,9 +39,7 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 app.search_text_paste() 
-            if event.key == pygame.K_BACKSPACE:
-                app.search_text_space(event)    
-            
+     
         if event.type == pygame.MOUSEMOTION:
             app.over_button(pos)
 

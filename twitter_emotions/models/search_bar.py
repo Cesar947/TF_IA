@@ -37,12 +37,13 @@ class SearchBar(Component):
                 if self.clicked == False:
                     self.asset = s_back_sel
                     self.button = s_btn_sel
+                    self.text_box.set_color((255,255,255))
                     self.clicked = True
                 else:
                     self.asset = s_back
                     self.button = s_btn
+                    self.text_box.set_color((235, 238, 240))
                     self.clicked = False
-
         
     def write_search_text(self, event):
         self.text_box.get_event(event)
@@ -51,9 +52,12 @@ class SearchBar(Component):
         self.search_text = clipboard.paste()
         self.text_box.set_buffer(self.search_text)
 
+    def get_text(self):
+        return self.search_text
+
     def space_search_text(self):
         self.search_text = self.search_text[:-1]
 
     def get_tweet_id(self):
-        url = self.search_text.strip('?s=20')
+        url = self.search_text.replace('?s=20', '')
         return url.split('/')[-1]

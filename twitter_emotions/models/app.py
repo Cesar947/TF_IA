@@ -43,7 +43,8 @@ class App():
         self.btn.is_over(pos)
 
     def click_button(self, pos):
-        self.btn.is_over(pos)
-        self.tweet_id = self.sbar.get_tweet_id()
-        self.tweet_detail.get_tweet(self.tweet_id)
-        self.searched = True
+        if self.sbar.get_text() != '':
+            self.btn.is_over(pos)
+            self.tweet_id = self.sbar.get_tweet_id()
+            self.tweet_detail.get_tweet(self.tweet_id)
+            self.searched = True

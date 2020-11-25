@@ -96,7 +96,10 @@ class TextBox(object):
             if keys[pg.K_BACKSPACE]:
                 if self.buffer:
                     self.buffer.pop()
- 
+    
+    def set_color(self, color):
+        self.color = color
+        
     def draw(self,surface):
         '''
         Call once on your main game loop
