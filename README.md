@@ -36,10 +36,6 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 ```
 
-## Despliegue 📦
-
-_Agrega notas adicionales sobre como hacer deploy_
-
 ## Construido con 🛠️
 
 _Menciona las herramientas que utilizaste para crear tu proyecto_
@@ -48,7 +44,7 @@ _Menciona las herramientas que utilizaste para crear tu proyecto_
 
 ## Autores ✒️
 
-* **Sebastian Pinillos* - *Implementación GUI* - [SebastianWGN](https://github.com/SebastianWGN)
+* **Sebastian Pinillos** - *Implementación GUI* - [SebastianWGN](https://github.com/SebastianWGN)
 * **Cesar Pizarro** - *Implementación NLP* - [Cesar947](https://github.com/Cesar947)
 * **Juanelv Salgado** - *Implementación SOM* - [Slayz08](https://github.com/Slayz08)
 
