@@ -6,6 +6,8 @@ from models.toolbar import ToolBar
 from models.button import Button
 from models.tweet_detail import TweetDetail
 from nlp.NLP_Pipeline import NlpPipeline
+from som.SOM import Som
+
 class App():
     def __init__(self, window):
         self.window = window
@@ -21,6 +23,10 @@ class App():
         # Pipeline integrado - Primera versión
         self.pipeline = NlpPipeline(open("twitter_emotions/nlp/tweets_dataset.txt", "r", encoding="utf8"))
         self.pipeline.run_pipeline()
+
+        #CREACION DE INSTANCIA SOM
+        som = Som(self.pipeline.bag_of_words, None, 3, 3, 0.5, 2000 )
+        som.train()
         
         # Pasando el pipeline como parámetro al TweetDetail
         # TweetDetail: Clase en donde se realiza la extracción y muestra del tweet

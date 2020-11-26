@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import math
 
 
-class SOM:
+class Som:
 
     def __init__(self, trainData, testData, rows, cols, learningRate, iterations):
         #numpy array
@@ -13,7 +13,7 @@ class SOM:
         #number of rows and cols of the SOM 
         self.rows = rows
         self.cols = cols
-        self.features = len(trainData)
+        self.features = len(trainData[0])
         self.learningRate = learningRate
         self.iterations = iterations
 
@@ -47,7 +47,7 @@ class SOM:
     def manhattanDistance(self, r1, c1, r2, c2):
         return np.abs(r1 - r2) + np.abs(c1 - c2)
 
-    def training(self):
+    def train(self):
         #una fila, va a tener 4 features, por eso dimension 4
         features = self.features
         #si quieres 4 clusters, entonces deberia ser mayor a 4*4 
@@ -56,11 +56,11 @@ class SOM:
         maxRange = rows + cols #VER POR QUÉ LO SUMA
         learningRate = self.learningRate
         iterations = self.iterations
-        dataSize = len(self.trainData)
+        dataSize = len(self.trainData[0])
         
 
-        dataset = "dataset.txt"
-        trainingData = np.loadtxt(dataset, delimiter=",", usecols=range(0,4), dtype=np.float64)
+        #dataset = "dataset.txt"
+        #trainingData = np.loadtxt(dataset, delimiter=",", usecols=range(0,4), dtype=np.float64)
 
         #Inicializamos los weights
         weights = np.random.randn(rows,cols,features)
@@ -104,7 +104,7 @@ class SOM:
                 sum = 0
 
                 for x in range(features):
-                    sum += self.trainData[currentBmuRow][currentBmuCol][x]
+                    sum += weights[currentBmuRow][currentBmuCol][x]
                 
                 labels.append(sum)
 
