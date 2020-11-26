@@ -99,14 +99,15 @@ class Som:
         
         labels = []
         for r in range(dataSize):
-            for c in range(features):
-                (currentBmuRow,currentBmuCol) = self.bmu(self.trainData, weights, r, rows, cols)
-                sum = 0
 
-                for x in range(features):
-                    sum += weights[currentBmuRow][currentBmuCol][x]
-                
-                labels.append(sum)
+            (currentBmuRow,currentBmuCol) = self.bmu(self.trainData, weights, r, rows, cols)
+            sum = 0
+
+            for c in range(features):
+                sum += weights[currentBmuRow][currentBmuCol][c]
+                print(sum)
+
+            labels.append(sum)
 
         maxValue = max(labels)
         minValue = min(labels)
