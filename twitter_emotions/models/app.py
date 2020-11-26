@@ -5,11 +5,11 @@ from models.search_bar import SearchBar
 from models.toolbar import ToolBar
 from models.button import Button
 from models.tweet_detail import TweetDetail
-from nlp.NLP_Pipeline import NlpPipeline
-from som.SOM import Som
+
+
 
 class App():
-    def __init__(self, window):
+    def __init__(self, window, pipeline, som):
         self.window = window
         self.sbar = SearchBar(70,140)
         self.tbar = ToolBar(0,20)
@@ -20,16 +20,13 @@ class App():
         cwd = os.getcwd() 
         files = os.listdir(cwd) 
         print("Files in %r: %s" % (cwd, files))
-        self.pipeline = NlpPipeline(open("twitter_emotions/nlp/tweets_dataset.txt", "r", encoding="utf8"))
-        self.pipeline.run_pipeline()
 
         #CREACION DE INSTANCIA SOM
-        som = Som(self.pipeline.bag_of_words, None, 12, 6, 0.7, 1000)
-        som.train()
-        
+        self.som = som
+        self.pipeline = pipeline
         # Pasando el pipeline como parámetro al TweetDetail
         # TweetDetail: Clase en donde se realiza la extracción y muestra del tweet
-        self.tweet_detail = TweetDetail(120,260, self.pipeline, som)
+        self.tweet_detail = TweetDetail(120,260, self.pipeline, self.som)
         self.tweet_id = ''
         self.clicked_bar = False
 
@@ -42,8 +39,12 @@ class App():
             self.bad_option.draw_option(self.window)
         if self.searched == True:
             self.tweet_detail.draw_tweet(self.window)
-            self.good_option.change_opacity(self.window)
-            self.bad_option.increment(self.window)
+            if self.tweet_detail.get_result() == 0:
+                self.good_option.change_opacity(self.window)
+                self.bad_option.increment(self.window)
+            if self.tweet_detail.get_result() == 1:
+                self.bad_option.change_opacity(self.window)
+                self.good_option.increment(self.window)
 
     def search(self, pos):
         self.sbar.is_clicked(pos)

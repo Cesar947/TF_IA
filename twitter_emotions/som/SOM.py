@@ -33,7 +33,7 @@ class Som:
 
     def singleClusterization(self, test_tweet):
         
-        (currentBmuRow,currentBmuCol) = self.bmu(self.trainData, self.finalWeights, 0, self.rows, self.cols)
+        (currentBmuRow,currentBmuCol) = self.bmu(test_tweet, self.finalWeights, 0, self.rows, self.cols)
         sum = 0
 
         for c in range(self.features):

@@ -2,7 +2,7 @@
 import pygame
 import clipboard
 from models.text_box import TextBox, username_settings
-from models.button import CloseButton
+from models.button import EButton
 from models.component import Component
 
 
@@ -14,14 +14,14 @@ s_btn = pygame.image.load('./twitter_emotions/assets/search_button.png')
 s_btn_sel = pygame.image.load('./twitter_emotions/assets/search_button_selected.png')
 
 font = pygame.font.Font('./twitter_emotions/models/font_family/GothamNarrow-Light.otf', 18)
-
+close_btn = pygame.image.load('./twitter_emotions/assets/close_btn.png')
 
 class SearchBar(Component):
     def __init__(self, x, y, width = s_back.get_rect().width, height = s_back.get_rect().height):
         Component.__init__(self, x, y, width, height)
         self.asset = s_back
         self.button = s_btn
-        self.c_btn = CloseButton(self.x + 535, self.y + 7)
+        self.c_btn = EButton(self.x + 535, self.y + 7, close_btn)
         self.text_box = TextBox(rect=(self.x + 40,self.y + 3,510,33), **username_settings)
         self.search_text = ''
         self.clicked = False
@@ -52,6 +52,7 @@ class SearchBar(Component):
     def erase_text(self, pos):
         if self.c_btn.is_click(pos):
             self.text_box.set_buffer([])
+            self.search_text = ''
 
     def write_search_text(self, event):
         self.text_box.get_event(event)

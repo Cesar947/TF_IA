@@ -48,6 +48,7 @@ class TweetDetail(Component):
         self.file_image = None
         self.photo_profile = None
         self.photo_profile2 = None
+        self.result = 4
 
     def draw_tweet(self, window):     
         window.blit(self.photo_profile, (self.x, self.y))
@@ -68,11 +69,14 @@ class TweetDetail(Component):
         self.tweet_text = tweet.full_text
         """ print(self.tweet_text)
         print(self.pipeline.test_tweet_vectorization(self.tweet_text)) """
-        result = self.som.singleClusterization(self.pipeline.test_tweet_vectorization(self.tweet_text))
+        self.result = self.som.singleClusterization(self.pipeline.test_tweet_vectorization(self.tweet_text))
+        print(self.result)
         self.file_image = io.BytesIO(urllib.request.urlopen(self.tweet_user_image).read())
         mode, size, data = crop_image(self.tweet_user_image)
         self.photo_profile = pygame.image.fromstring(data, size, mode)
 
+    def get_result(self):
+        return self.result
 
     def blit_text(self, surface, text, pos):
         words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.

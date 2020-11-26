@@ -140,7 +140,7 @@ class NlpPipeline:
                 elif frecuency != 0:
                     dict_aux[word_number] += frecuency
         
-        self.words_keys_in_bag = sorted(dict_aux, key=dict_aux.get, reverse=True)[:1000]
+        self.words_keys_in_bag = sorted(dict_aux, key=dict_aux.get, reverse=True)[:3000]
 
         aux_vocabulary = {} 
         for key in self.words_keys_in_bag:
