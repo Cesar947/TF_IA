@@ -25,7 +25,7 @@ class App():
         self.pipeline.run_pipeline()
 
         #CREACION DE INSTANCIA SOM
-        som = Som(self.pipeline.bag_of_words, None, 3, 3, 0.5, 2000 )
+        som = Som(self.pipeline.bag_of_words, None, 10, 5, 0.7, 1000 )
         som.train()
         
         # Pasando el pipeline como parámetro al TweetDetail

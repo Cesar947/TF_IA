@@ -17,6 +17,9 @@ class Som:
         self.learningRate = learningRate
         self.iterations = iterations
 
+        self.finalWeights = None
+        self.breakpoint = None
+
     def euclidianDistance(self, a, b):
         return np.linalg.norm(a - b)
 
@@ -29,7 +32,19 @@ class Som:
         
 
     def singleClusterization(self, test_tweet):
-        return
+        
+        (currentBmuRow,currentBmuCol) = self.bmu(self.trainData, self.finalWeights, 0, self.rows, self.cols)
+        sum = 0
+
+        for c in range(self.features):
+            sum += self.finalWeights[currentBmuRow][currentBmuCol][c]
+            print("Suma:" +str(sum))
+        
+        if sum < self.breakpoint:
+            return 0
+        else:
+            return 1
+
 
     def bmu(self, data, weights, index, rows, cols):
         result = (0,0)
@@ -56,7 +71,7 @@ class Som:
         maxRange = rows + cols #VER POR QUÉ LO SUMA
         learningRate = self.learningRate
         iterations = self.iterations
-        dataSize = len(self.trainData[0])
+        dataSize = len(self.trainData)
         
 
         #dataset = "dataset.txt"
@@ -85,27 +100,18 @@ class Som:
                     if(self.manhattanDistance(bmuRow, bmuCol, r, c)  < currentRange):
                         weights[r][c] = weights[r][c] + currentAlpha * (self.trainData[index] - weights[r][c])
 
-        
-        #Generar rango para poder obtener las clases
-        #iterar todo el dataset y obtener, para cada uno, su BMU
-        #guardar esta matriz donde cada row va a ser un dato (patron de entrenamiento) y las columnas van a ser los pesos del BMU hacia ese nodo de entrada
-        #sumar todos los pesos por cada fila
-        #una vez calculado todo, hallar el maximo y minimo
-        #hallar la diferencia entre ambos valores
-        #dividirlo entre 2 (las clases que queremos)
-        #hallar los intervalos minimo + resultado division 
-        #maximo - resultado division
-        #guardar estos intervalos
+        self.finalWeights = weights
+
         
         labels = []
-        for r in range(dataSize):
+        for r in range(dataSize//3):
 
             (currentBmuRow,currentBmuCol) = self.bmu(self.trainData, weights, r, rows, cols)
             sum = 0
 
             for c in range(features):
                 sum += weights[currentBmuRow][currentBmuCol][c]
-                print(sum)
+                print("Fila " + str(r)+ " Columna "+ str(c) + "sum "+str(sum))
 
             labels.append(sum)
 
@@ -113,6 +119,7 @@ class Som:
         minValue = min(labels)
 
         breakpoint = (maxValue-minValue) / 2
+        self.breakpoint = breakpoint
 
         for i in range(len(labels)):
             if labels[i] < breakpoint:
@@ -121,26 +128,11 @@ class Som:
                 labels[i] = 1
 
         print(labels)
+        
+
+        self.singleClusterization(self.trainData[0])
 
 
-
-
-      
-        """
-          # Observamos
-        for i in range(iterations):
-            (bmuRow, bmuCol) = self.bmu(trainingData, weights, index, rows, cols)
-            print(i, " ", bmuRow, bmuCol, weights[bmuRow][bmuCol])
-
-        # Visualización
-        mapa = np.empty(shape=(rows,cols), dtype=np.int)
-        for i in range(rows):
-            for j in range(cols):
-                mapa[i][j] = -1
-        for t in range(10):
-            (bmuRow, bmuCol) = bmu(trainingData, weights, index, rows, cols)
-            mapa[bmuRow][bmuCol] = salida[t]
-        """
 
 
 
