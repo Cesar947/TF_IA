@@ -15,20 +15,24 @@ api = tweepy.API(auth)
 
 #results = api.search('I want to be alone', lang='en', count=10)
 textFile = open('tweets_sad.txt', 'a', encoding='utf-8')
-#q: query
-#lang: language
-#count: count
-#results = :
 
-for tweet in tweepy.Cursor(api.search, q="need help OR I'm depressed", lang='en', tweet_mode='extended').items(600):
-    if ('RT @' not in tweet.full_text):
-        textFile.write(tweet.full_text + "|%&|\n")
 
+# Palabras o textos buscados
 
 #depressed
 #sadness
 #sad
 #alone
+#need help
+
+# En items(600), el 600 es el número de tweets máximos para obtener
+# Se realizaron varios intentos para completar el dataset al 100%, 
+# puesto que no se llegaba al máximo de tweets con las búsquedas
+for tweet in tweepy.Cursor(api.search, q="need help OR I'm depressed", lang='en', tweet_mode='extended').items(600):
+    if ('RT @' not in tweet.full_text):
+        textFile.write(tweet.full_text + "|%&|\n")
+
+
 
 
 

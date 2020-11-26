@@ -5,7 +5,6 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import CountVectorizer
-#import heapq
 import numpy as np
 
 class NlpPipeline:
