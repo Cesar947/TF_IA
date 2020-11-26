@@ -4,7 +4,7 @@ Aplicativo de escritorio para definir si los sentimientos que expresa un tweet s
 
 ### Pre-requisitos 📋
 
-Para la ejecución del proyecto deberemos hacer las siguientes liberías instaladas:
+Para la ejecución del proyecto deberemos tener las siguientes liberías instaladas:
 ```
 pip install nltk
 ```
@@ -37,8 +37,6 @@ nltk.download('wordnet')
 ```
 
 ## Construido con 🛠️
-
-_Menciona las herramientas que utilizaste para crear tu proyecto_
 
 * [Twitter API](https://developer.twitter.com/en) - Twitter API
 
