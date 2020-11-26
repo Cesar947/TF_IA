@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import CountVectorizer
-import heapq
+#import heapq
 import numpy as np
 
 class NlpPipeline:
@@ -206,7 +206,7 @@ class NlpPipeline:
                     vector[i] += 1
                 i += 1
 
-        return vector
+        return np.array(vector)
 
 
 # test = "I wanna say thanks to all the supporter this Season! :heart:\n"+\
