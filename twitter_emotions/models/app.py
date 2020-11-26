@@ -17,20 +17,19 @@ class App():
         self.good_option = Option(1,200,550)
         self.bad_option = Option(2,400,550)
         self.searched = False
-        cwd = os.getcwd()  # Get the current working directory (cwd)
-        files = os.listdir(cwd)  # Get all the files in that directory
+        cwd = os.getcwd() 
+        files = os.listdir(cwd) 
         print("Files in %r: %s" % (cwd, files))
-        # Pipeline integrado - Primera versión
         self.pipeline = NlpPipeline(open("twitter_emotions/nlp/tweets_dataset.txt", "r", encoding="utf8"))
         self.pipeline.run_pipeline()
 
         #CREACION DE INSTANCIA SOM
-        som = Som(self.pipeline.bag_of_words, None, 10, 5, 0.7, 1000 )
+        som = Som(self.pipeline.bag_of_words, None, 12, 6, 0.7, 1000)
         som.train()
         
         # Pasando el pipeline como parámetro al TweetDetail
         # TweetDetail: Clase en donde se realiza la extracción y muestra del tweet
-        self.tweet_detail = TweetDetail(120,260, self.pipeline)
+        self.tweet_detail = TweetDetail(120,260, self.pipeline, som)
         self.tweet_id = ''
         self.clicked_bar = False
 

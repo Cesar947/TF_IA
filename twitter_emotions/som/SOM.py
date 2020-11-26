@@ -132,6 +132,7 @@ class Som:
 
         self.singleClusterization(self.trainData[0])
 
+    
 
 
 
